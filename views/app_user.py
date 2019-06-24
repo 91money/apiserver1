@@ -24,4 +24,5 @@ def user_regist():
 
 @blue.route('/login', methods=('GET', ))
 def user_login():
-    return "hi, login"
+    api_logger.debug('user login get action!')
+    return "<html><head><title>Login Page</title></head><body>Hi, Disen</body></html>"
