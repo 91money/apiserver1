@@ -1,0 +1,57 @@
+import pymysql
+from pymysql.cursors import DictCursor
+
+from logger import api_logger
+
+DB_CONFIG = {
+    'host': 'localhost',
+    'port': 3306,
+    'user': 'root',
+    'password': 'root',
+    'db': '91_api_db',
+    'charset': 'utf8'
+}
+
+
+class DB:
+    def __init__(self):
+        self.conn = pymysql.Connect(**DB_CONFIG)
+        # 如果上传的code中包含更新sql语句，如何自动创建(在服务器端)
+
+    def __enter__(self):
+        if self.conn is None:
+            # 考虑数据库连接是断开的情况
+            self.conn = pymysql.Connect(**DB_CONFIG)
+
+        return self.conn.cursor(cursor=DictCursor)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            self.conn.commit()
+        else:
+            api_logger.error(exc_val)
+            self.conn.rollback()
+
+        return True  # 异常不会继续向外抛出
+
+
+class BaseDao():
+    def __init__(self):
+        self.db = DB()
+
+    def save(self, table_name, **values):
+        # insert or update
+        # values['id'] 如果ID值是存在的，则是更新, 反之是插入
+        pass
+
+    def delete(self, talbe_name, by_id):
+        pass
+
+    def list(self, table_name,
+             *fields, where=None, args=None,
+             page=1, page_size=20):
+        pass
+
+    def count(self, table_name):
+        pass
+    
