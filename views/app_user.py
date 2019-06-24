@@ -20,3 +20,8 @@ def user_regist():
         'msg': 'ok',
         'data': req_data
     })
+
+
+@blue.route('/login', methods=('GET', ))
+def user_login():
+    return "hi, login"
