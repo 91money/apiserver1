@@ -42,7 +42,17 @@ class BaseDao():
     def save(self, table_name, **values):
         # insert or update
         # values['id'] 如果ID值是存在的，则是更新, 反之是插入
-        pass
+        sql = 'insert into %s(%s) values(%s)' % \
+              (table_name,
+               ','.join(values.keys()),
+               ','.join([ '%%(%s)s' % key for key in values.keys() ])
+               )
+
+        with self.db as c:
+            c.execute(sql, args=values)
+
+        api_logger.info('insert %s ok!' % sql)
+
 
     def delete(self, talbe_name, by_id):
         pass
@@ -54,4 +64,3 @@ class BaseDao():
 
     def count(self, table_name):
         pass
-    

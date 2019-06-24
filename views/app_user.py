@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import request, jsonify
 from logger import api_logger
+from dao.user_dao import UserDao
 
 blue = Blueprint('user_api', __name__)
 
@@ -14,6 +15,15 @@ def user_regist():
         req_data = request.get_json()
 
     api_logger.debug(req_data)
+
+    # 验证上传的必须的数据是否存在
+    if all(req_data.get('user_name', False),
+           req_data.get('auth_string', False),
+           req_data.get('nick_name', False),
+           req_data.get('phone', False)):
+
+        dao = UserDao()
+        dao.save(**req_data)
 
     return jsonify({
        'code': 8000,
