@@ -48,11 +48,13 @@ class BaseDao():
                ','.join([ '%%(%s)s' % key for key in values.keys() ])
                )
 
+        success = False
         with self.db as c:
             c.execute(sql, args=values)
+            api_logger.info('insert %s ok!' % sql)
+            success = True
 
-        api_logger.info('insert %s ok!' % sql)
-
+        return success
 
     def delete(self, talbe_name, by_id):
         pass
@@ -64,3 +66,12 @@ class BaseDao():
 
     def count(self, table_name):
         pass
+
+    def query(self, sql, *args):
+        with self.db as c:
+            c.execute(sql, args=args)
+            data = c.fetchall()
+            if data:
+                data = list(data)
+
+        return data
