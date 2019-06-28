@@ -3,6 +3,7 @@ from logger import api_logger
 
 from libs.crypt import make_password, check_password
 
+
 class UserDao(BaseDao):
 
     def save(self, **values):

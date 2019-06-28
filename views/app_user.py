@@ -12,7 +12,6 @@ from libs import cache
 def user_regist():
     # 前端请求的Content-Type: application/json
     req_data = None
-    api_logger.info(request.headers)
     if request.headers['Content-Type'].startswith('application/json'):
         req_data = request.get_json()
 

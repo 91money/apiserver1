@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Referer" content="no-referer">
+    <title>Hi, CorPage</title>
+</head>
+<body>
+
+<button onclick="check_code(this)">
+    测试1
+</button>
+
+<button onclick="regist(this)">
+    测试2
+</button>
+<button onclick="login(this)">
+    测试3
+</button>
+
+<script>
+
+
+        function check_code(btn){
+             var req = new XMLHttpRequest();
+             req.open('GET', 'http://121.199.63.71:8002/check_code/?phone=18729592201')
+             req.onload = function(){
+                data  = req.responseText
+                btn.innerHTML = data
+             }
+
+             req.send();
+        }
+        function regist(btn){
+            var req = new XMLHttpRequest();
+            console.log(req)
+            req.open('POST', 'http://121.199.63.71:9005/regist/')
+            req.setRequestHeader('Content-Type', 'application/json')
+            req.onload = function(){
+
+                data  = req.responseText
+                if(req.status == 200){
+
+                    data = JSON.parse(data)
+                    btn.innerHTML = data.msg
+                }else{
+                    console.log(data)
+                    btn.innerHTML = data
+                }
+            }
+            req.send('{"tel": "18729592201"}')
+
+        }
+
+       function login(btn){
+            fetch('http://101.37.252.237:9001/login/?userTel=18163810350&password=8888')
+                .then(function(resp){
+                       resp.json().then(data=> console.log(data))
+                })
+       }
+</script>
+
+</body>
+</html>
