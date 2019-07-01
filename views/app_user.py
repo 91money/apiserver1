@@ -1,12 +1,18 @@
+import os
+import uuid
+
 from flask import Blueprint
 from flask import request, jsonify
+from werkzeug.datastructures import FileStorage
+
 from logger import api_logger
 from dao.user_dao import UserDao
 
 blue = Blueprint('user_api', __name__)
 
 from datetime import datetime
-from libs import cache
+from libs import cache, oss
+
 
 @blue.route('/regist/', methods=('POST',))
 def user_regist():
@@ -52,7 +58,7 @@ def user_regist():
             })
 
 
-@blue.route('/check_name/', methods=('GET', ))
+@blue.route('/check_name/', methods=('GET',))
 def check_login_name():
     # 查询参为数
     login_name = request.args.get('login_name')
@@ -98,3 +104,53 @@ def user_login():
             'code': 101,
             'msg': '请求参数login_name和auth_str必须存在'
         })
+
+
+@blue.route('/upload_avator/', methods=('POST',))
+def upload_avator():
+    # 上传的头像字段为 img
+    # 表单参数： token
+    file: FileStorage = request.files.get('img', None)
+    token = request.form.get('token', None)
+
+    if all((bool(file), bool(token))):
+        # 验证文件的类型, png/jpeg/jpg, 单张不能超过2M
+        # content-type: image/png, image/jpeg
+        print(file.content_length, 'bytes')
+        if file.content_type in ('image/png',
+                                 'image/jpeg'):
+            filename = uuid.uuid4().hex \
+                       + os.path.splitext(file.filename)[-1]
+            file.save(filename)
+
+            # 上传到oss云服务器上
+            key = oss.upload_file(filename)
+
+            os.remove(filename)  # 删除临时文件
+
+            # 将key写入到DB中
+            return jsonify({
+                'code': 200,
+                'msg': '上传文件成功',
+                'file_key': key
+            })
+        else:
+            return jsonify({
+                'code': 201,
+                'msg': '图片格式只支持png或jpeg'
+            })
+
+    return jsonify({
+        'code': 100,
+        'msg': 'POST请求参数必须有img和token'
+    })
+
+
+@blue.route('/img_url/<string:key>', methods=('GET', ))
+def get_img_url(key):
+    img_type = int(request.args.get('type', 0))
+
+    img_url = oss.get_url(key) if img_type == 0 else oss.get_small_url(key)
+    return jsonify({
+        'url': img_url
+    })
