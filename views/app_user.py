@@ -153,4 +153,4 @@ def get_img_url(key):
     img_url = oss.get_url(key) if img_type == 0 else oss.get_small_url(key)
     return jsonify({
         'url': img_url
-    })
+        })
