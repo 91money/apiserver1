@@ -4,7 +4,7 @@ from pymysql.cursors import DictCursor
 from logger import api_logger
 
 DB_CONFIG = {
-    'host': 'aliyun901',
+    'host': '121.199.163.71',
     'port': 3306,
     'user': 'root',
     'password': 'root',
