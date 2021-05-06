@@ -11,7 +11,7 @@ crcmod==1.7
 Flask==1.0.3
 flask-blueprint==1.2.7
 Flask-Celery==2.4.3
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 Flask-Script==2.0.6
 idna==2.8
 itsdangerous==1.1.0
